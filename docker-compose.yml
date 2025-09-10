@@ -1,0 +1,23 @@
+services:
+  database-service:
+    image: mongo:8
+    container_name: database-service
+    restart: always
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    environment:
+      - TZ=${TZ}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASS}
+      - MONGO_INITDB_DATABASE=${MONGO_DB}
+    volumes:
+      - mongo-data:/data/db
+      - ./services/database_service/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - product-network
+
+volumes:
+  mongo-data:
+
+networks:
+  product-network:
