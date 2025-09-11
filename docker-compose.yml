@@ -16,6 +16,11 @@ services:
       - ./deploy/mongo/data:/data/db
       - ./deploy/mongo/log:/var/log/mongodb
       - ./deploy/mongo/init/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '10'
+        max-size: '1024m'
     networks:
       - product-network
 
