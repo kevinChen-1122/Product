@@ -1,7 +1,7 @@
 services:
-  database-service:
+  mongo:
     image: mongo:8
-    container_name: database-service
+    container_name: product-mongo
     restart: always
     ports:
       - ${MONGO_PORT}:${MONGO_PORT}
@@ -10,14 +10,14 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASS}
       - MONGO_INITDB_DATABASE=${MONGO_DB}
+      - MONGO_APP_USERNAME=${MONGO_APP_USERNAME}
+      - MONGO_APP_PASSWORD=${MONGO_APP_PASSWORD}
     volumes:
-      - mongo-data:/data/db
-      - ./services/database_service/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./deploy/mongo/data:/data/db
+      - ./deploy/mongo/log:/var/log/mongodb
+      - ./deploy/mongo/init/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     networks:
       - product-network
-
-volumes:
-  mongo-data:
 
 networks:
   product-network:
