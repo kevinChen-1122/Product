@@ -8,7 +8,8 @@ COMPOSE_FILE ?= docker-compose.yml
 ENV_FILE     ?= .env
 
 # 服務名稱（對應 docker-compose.yml）
-MONGO_SVC    ?= mongo
+MONGO_SVC         ?= mongo
+KEYWORD_CONFIG_SVC ?= keyword-config-service
 
 # 預設指令
 .DEFAULT_GOAL := help
@@ -42,10 +43,6 @@ rebuild: env ## 重新建置（不使用快取）
 up: env ## 啟動所有服務（背景）
 	$(DC) up -d
 
-.PHONY: up-mongo
-up-mongo: env ## 只啟動 Mongo
-	$(DC) up -d $(MONGO_SVC)
-
 .PHONY: stop
 stop: env ## 停止所有容器
 	$(DC) stop
@@ -66,13 +63,18 @@ ps: env ## 查看服務狀態
 logs: env ## 追蹤全部服務日誌
 	$(DC) logs -f --tail=200
 
+# --- Mongo 常用 ---
+.PHONY: up-mongo
+up-mongo: env ## 只啟動 Mongo
+	$(DC) up -d $(MONGO_SVC)
+
+# 看 logs
 .PHONY: logs-mongo
 logs-mongo: env ## 只看 Mongo 日誌
 	$(DC) logs -f $(MONGO_SVC)
 
-# --- Mongo 常用 ---
-.PHONY: mongo-sh
-mongo-sh: env ## 進入 mongosh（用 .env 的 root 帳密）
+.PHONY: bash-mongo
+bash-mongo: env ## 進入 mongosh（用 .env 的 root 帳密）
 	@echo "使用 $(MONGO_ROOT_USER) / **** 連線到 admin 資料庫"
 	@docker exec -it $$($(DC) ps -q $(MONGO_SVC)) mongosh "mongodb://$${MONGO_ROOT_USER}:$${MONGO_ROOT_PASS}@localhost:$${MONGO_PORT:-27017}/admin?authSource=admin"
 
@@ -98,6 +100,22 @@ mongo-restore: env ## 從檔案還原：make mongo-restore FILE=backup/mongo/bac
 	@if [ -z "$(FILE)" ]; then echo "請指定 FILE=..."; exit 1; fi
 	@cat "$(FILE)" | docker exec -i $$($(DC) ps -q $(MONGO_SVC)) mongorestore --archive
 	@echo "還原完成"
+
+# --- keyword-config-service 常用 ---
+# 啟動
+.PHONY: up-keyword-config
+up-keyword-config: env ## 只啟動 keyword-config
+	$(DC) up -d $(KEYWORD_CONFIG_SVC)
+
+# 看 logs
+.PHONY: logs-keyword-config
+logs-keyword-config: env
+	$(DC) logs -f $(KEYWORD_CONFIG_SVC)
+
+# 進容器
+.PHONY: bash-keyword-config
+bash-keyword-config: env
+	$(DC) exec $(KEYWORD_CONFIG_SVC) bash
 
 # --- 開發便利 ---
 .PHONY: restart

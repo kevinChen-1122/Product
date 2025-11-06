@@ -1,0 +1,34 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2025-09-08T08:00:00Z",
+  "sellers": [
+    {
+      "seller_id": "sam_9787",
+      "name": "王子平",
+      "status": "active",
+      "timezone": "Asia/Taipei",
+      "currency": "TWD",
+      "search_place": "carousell",
+      "search_rules": [
+        {
+          "keywords": "iPhone 14",
+          "must_include": ["盒裝", "保固"],
+          "must_exclude": ["螢幕裂", "泡水", "無法開機"],
+          "regex_include": [],
+          "regex_exclude": [],
+          "locations": ["台北市", "新北市"],
+          "price": { "min": 1000, "max": 40000 }
+        },
+        {
+          "keywords": "AirPods",
+          "must_include": ["盒裝", "保固"],
+          "must_exclude": [],
+          "regex_include": [],
+          "regex_exclude": [],
+          "locations": ["台北市", "新北市"],
+          "price": { "min": 1000, "max": 5000 }
+        }
+      ]
+    }
+  ]
+}

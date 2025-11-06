@@ -1,10 +1,10 @@
 services:
   mongo:
     image: mongo:8
-    container_name: product-mongo
+    container_name: mongo
     restart: always
     ports:
-      - ${MONGO_PORT}:${MONGO_PORT}
+      - ${MONGO_PORT:-27017}:${MONGO_PORT:-27017}
     environment:
       - TZ=${TZ}
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
@@ -24,5 +24,24 @@ services:
     networks:
       - product-network
 
+  keyword-config-service:
+    build:
+      context: ./services/keyword_config_service
+      dockerfile: Dockerfile
+    container_name: keyword-config-service
+    ports:
+      - ${KEYWORD_CONFIG_SERVICE_PORT:-8080}:${KEYWORD_CONFIG_SERVICE_PORT:-8080}
+    environment:
+      - TZ=${TZ}
+      - MONGO_URI=mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@mongo:${MONGO_PORT:-27017}/?authSource=${MONGO_DB}
+      - MONGO_DB=${MONGO_DB}
+      - KEYWORD_SOURCE=${KEYWORD_SOURCE}
+      - KEYWORD_CONFIG_SERVICE_PORT=${KEYWORD_CONFIG_SERVICE_PORT:-8080}
+    volumes:
+      - ./test.json:/app/keyword_config_service/test.json:ro
+    depends_on:
+      - mongo
+    networks:
+      - product-network
 networks:
   product-network:

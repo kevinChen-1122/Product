@@ -9,6 +9,7 @@ Product/
 │     ├─ data/                    # Mongo 資料卷（會自動生成）
 │     └─ log/                     # Mongo 日誌卷（可選）
 ├─ services/
+│  ├─ seller_config_service/
 │  ├─ search_product_service/
 │  ├─ auto_bargain_service/
 │  └─ notify_service/
